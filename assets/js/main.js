@@ -30,7 +30,7 @@ function afterScrollSettles(action, eligible) {
   return () => clearTimeout(timer);
 }
 function isSelected(player) {
-  return !player.closest('[hidden]');
+  return !player.closest('[hidden]') && (!player.closest('.application-card') || player.closest('.application-card').classList.contains('is-active'));
 }
 function visibleFraction(player) {
   const bounds = player.getBoundingClientRect();
@@ -131,6 +131,40 @@ foregroundVideos.forEach(player => {
 });
 syncBackgroundPlayback();
 
+// Large, scrollable video cards; only the centered card plays.
+document.querySelectorAll('.video-carousel').forEach(carousel => {
+  const track = carousel.querySelector('[data-video-gallery]');
+  const cards = [...track.querySelectorAll('.application-card')];
+  let active = -1;
+  function update() {
+    const center = track.getBoundingClientRect().left + track.clientWidth / 2;
+    const distances = cards.map(card => Math.abs(card.getBoundingClientRect().left + card.offsetWidth / 2 - center));
+    const index = distances.indexOf(Math.min(...distances));
+    if (index === active) return;
+    active = index;
+    cards.forEach((card, i) => {
+      card.classList.toggle('is-active', i === active);
+      card.inert = i !== active;
+      const player = card.querySelector('video');
+      if (i !== active) player.pause();
+      else player.dispatchEvent(new Event('carouselactivate'));
+    });
+    carousel.querySelector('.carousel-status').textContent = `${active + 1} / ${cards.length}`;
+  }
+  function move(delta) {
+    const next = cards[(active + delta + cards.length) % cards.length];
+    track.scrollTo({left: track.scrollLeft + next.getBoundingClientRect().left - track.getBoundingClientRect().left - (track.clientWidth - next.offsetWidth) / 2, behavior: reducedMotion.matches ? 'instant' : 'smooth'});
+  }
+  carousel.querySelector('.carousel-prev').addEventListener('click', () => move(-1));
+  carousel.querySelector('.carousel-next').addEventListener('click', () => move(1));
+  track.addEventListener('keydown', event => {
+    if (event.target !== track) return;
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); move(event.key === 'ArrowRight' ? 1 : -1); }
+  });
+  track.addEventListener('scroll', update, {passive:true});
+  update();
+});
+
 // Tabs and gallery videos share lazy autoplay, pause, and visibility behavior.
 document.querySelectorAll('[data-video-tabs], video[data-autoplay-video]').forEach(container => {
   const tabs = [...container.querySelectorAll('[role="tab"]')];
@@ -193,6 +227,11 @@ document.querySelectorAll('[data-video-tabs], video[data-autoplay-video]').forEa
   }, { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: [0, 0.25] });
   players.forEach(player => {
     visibilityObserver.observe(player);
+    player.addEventListener('carouselactivate', () => {
+      inView = visibleFraction(player) >= 0.25;
+      shouldResume = true;
+      if (inView) scheduleActive();
+    });
     player.addEventListener('play', () => {
       if (player !== players[activeIndex]) return;
       cancelAutoStart();

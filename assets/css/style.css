@@ -151,9 +151,20 @@ dialog{width:min(1440px,94vw);max-height:94dvh;max-width:none;padding:0;border:1
   .application-section h2{font-size:29px;letter-spacing:-.9px}
 }
 
-.application-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;align-items:start}
-.application-card{margin:0;min-width:0}
-.application-card .video-frame{box-shadow:none}
-.application-card figcaption{padding-top:20px}
-.application-card h3{margin:0 0 10px;font-size:22px;line-height:1.35;letter-spacing:-.5px;font-weight:600}
-@media(max-width:700px){.application-grid{grid-template-columns:1fr;gap:34px}.application-card figcaption{padding-top:16px}.application-card h3{font-size:21px}}
+
+.comparisons-section.wrap,.application-section.wrap{width:100%;overflow:hidden}
+.video-carousel{position:relative;--card-width:min(1040px,82vw)}
+.application-grid{display:flex;gap:36px;overflow-x:auto;scroll-snap-type:x mandatory;padding:24px max(9vw,calc((100% - 1040px)/2)) 30px;scrollbar-width:none;overscroll-behavior-x:contain}
+.application-grid::-webkit-scrollbar{display:none}
+.application-card{flex:0 0 var(--card-width);margin:0;min-width:0;scroll-snap-align:center;opacity:.4;transform:scale(.95);transition:opacity .3s,transform .3s}
+.application-card.is-active{opacity:1;transform:scale(1)}
+.application-card .video-frame{box-shadow:0 12px 32px rgba(23,38,45,.12)}
+.application-card figcaption{padding:24px 12px 0;text-align:center}
+.application-card h3{margin:0 0 10px;font-size:24px;line-height:1.35;letter-spacing:-.5px;font-weight:600}
+.application-description{max-width:850px;margin-inline:auto}
+.carousel-arrow{position:absolute;top:calc(var(--card-width)*.28125 + 24px);transform:translateY(-50%);z-index:2;width:48px;height:48px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--ink);font-size:38px;line-height:1;box-shadow:0 4px 18px #17262d15;cursor:pointer;display:grid;place-items:center}
+.carousel-arrow:hover{background:var(--tint);color:var(--accent)}
+.carousel-prev{left:max(2vw,calc((100% - 1156px)/2))}.carousel-next{right:max(2vw,calc((100% - 1156px)/2))}
+.carousel-status{text-align:center;font-size:13px;letter-spacing:3px;color:var(--muted);margin:0}
+@media(max-width:700px){.video-carousel{--card-width:90vw}.application-grid{gap:18px;padding-inline:5vw}.carousel-arrow{width:36px;height:36px;font-size:29px}.carousel-prev{left:1vw}.carousel-next{right:1vw}.application-card figcaption{padding-top:20px}.application-card h3{font-size:21px}.application-description{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.application-card{transition:none}}
