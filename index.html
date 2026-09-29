@@ -12,8 +12,8 @@
   <link rel="canonical" href="https://flowhmr.github.io/">
   <link rel="icon" href="data:,">
   <title>FlowHMR: Physically Plausible Motion Capture from Video</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=39982adb8c">
-  <script src="assets/js/main.js" defer></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=4c7be5219d">
+  <script src="assets/js/main.js?v=ac7fc441bb" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -25,6 +25,7 @@
         <a href="#abstract">Abstract</a>
         <a href="#method">Method</a>
         <a href="#results">Results</a>
+        <a href="#application">Application</a>
       </div>
     </nav>
   </header>
@@ -90,7 +91,7 @@
           <picture><source srcset="assets/media/pipeline.webp" type="image/webp"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="FlowHMR pipeline: video-conditioned flow matching followed by reinforcement learning with reconstruction and simulation tracking rewards." loading="lazy"></picture>
           <span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg>Enlarge figure</span>
         </button>
-        <figcaption><span>Overview of the FlowHMR framework.</span><a href="assets/media/pipeline.pdf" target="_blank" rel="noopener">View PDF</a></figcaption>
+        <figcaption><span>Overview of the FlowHMR framework.</span></figcaption>
       </figure>
       <div class="method-details">
         <article><span class="step-number">01</span><h3>Video-conditioned flow matching</h3><p>Learn the distribution of global human motion from a large collection of videos paired with 3D motion annotations.</p></article>
@@ -109,13 +110,13 @@
       </figure>
     </section>
 
-    <section class="comparisons-section section wrap" id="comparisons" aria-labelledby="comparisons-title">
+    <section class="comparisons-section section wrap" id="comparisons" aria-labelledby="comparisons-title" data-video-tabs>
       <div class="section-heading centered"><span class="section-index">04 / Qualitative results</span><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
-      <div class="comparison-tabs" role="tablist" aria-label="Qualitative comparison videos">
-        <button id="comparison-tab-1" class="comparison-tab" type="button" role="tab" aria-selected="true" aria-controls="comparison-panel-1" tabindex="0">Push-up</button>
-        <button id="comparison-tab-2" class="comparison-tab" type="button" role="tab" aria-selected="false" aria-controls="comparison-panel-2" tabindex="-1">Soccer kick</button>
+      <div class="media-tabs" role="tablist" aria-label="Qualitative comparison videos">
+        <button id="comparison-tab-1" class="media-tab" type="button" role="tab" aria-selected="true" aria-controls="comparison-panel-1" tabindex="0">Push-up</button>
+        <button id="comparison-tab-2" class="media-tab" type="button" role="tab" aria-selected="false" aria-controls="comparison-panel-2" tabindex="-1">Soccer kick</button>
       </div>
-      <div id="comparison-panel-1" class="comparison-panel" role="tabpanel" aria-labelledby="comparison-tab-1" tabindex="0">
+      <div id="comparison-panel-1" class="media-panel" role="tabpanel" aria-labelledby="comparison-tab-1" tabindex="0">
         <div class="video-frame">
           <video id="comparison-video-1" controls muted playsinline loop preload="none" poster="assets/media/comparison-1-poster.jpg" aria-label="Push-up qualitative comparison">
             <source src="assets/media/comparison-1.mp4" type="video/mp4">
@@ -123,11 +124,37 @@
           </video>
         </div>
       </div>
-      <div id="comparison-panel-2" class="comparison-panel" role="tabpanel" aria-labelledby="comparison-tab-2" tabindex="0" hidden>
+      <div id="comparison-panel-2" class="media-panel" role="tabpanel" aria-labelledby="comparison-tab-2" tabindex="0" hidden>
         <div class="video-frame">
           <video id="comparison-video-2" controls muted playsinline loop preload="none" poster="assets/media/comparison-2-poster.jpg" aria-label="Soccer kick qualitative comparison">
             <source src="assets/media/comparison-2.mp4" type="video/mp4">
             Your browser does not support embedded video. <a href="assets/media/comparison-2.mp4">Download the soccer kick comparison.</a>
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="application-section section wrap" id="application" aria-labelledby="application-title" data-video-tabs>
+      <div class="section-heading centered"><span class="section-index">05 / Applications</span><h2 id="application-title">Application</h2><p>From recovered motion to robots and animated characters.</p></div>
+      <div class="media-tabs" role="tablist" aria-label="Application videos">
+        <button id="application-tab-robotics" class="media-tab" type="button" role="tab" aria-selected="true" aria-controls="application-panel-robotics" tabindex="0">Data for Robotics</button>
+        <button id="application-tab-animation" class="media-tab" type="button" role="tab" aria-selected="false" aria-controls="application-panel-animation" tabindex="-1">Animation Creation</button>
+      </div>
+      <div id="application-panel-robotics" class="media-panel" role="tabpanel" aria-labelledby="application-tab-robotics" tabindex="0">
+        <p class="application-description" id="application-robotics-description">We retarget motions generated by FlowHMR to the Unitree G1 robot using <a href="https://github.com/YanjieZe/GMR" target="_blank" rel="noopener noreferrer">GMR</a>, then use <a href="https://nvlabs.github.io/GEAR-SONIC/" target="_blank" rel="noopener noreferrer">SONIC</a> to track the retargeted motions in physics simulation.</p>
+        <div class="video-frame">
+          <video id="application-video-robotics" controls muted playsinline loop preload="none" poster="assets/media/application-robotics-poster.jpg" aria-label="FlowHMR motions retargeted to G1 and tracked with SONIC in physics simulation" aria-describedby="application-robotics-description">
+            <source src="assets/media/application-robotics.mp4" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/application-robotics.mp4">Download the robotics application video.</a>
+          </video>
+        </div>
+      </div>
+      <div id="application-panel-animation" class="media-panel" role="tabpanel" aria-labelledby="application-tab-animation" tabindex="0" hidden>
+        <p class="application-description" id="application-animation-description">We retarget motions generated by FlowHMR to Mixamo characters, then use GPT-6 Astra for scene reconstruction and motion alignment.</p>
+        <div class="video-frame">
+          <video id="application-video-animation" controls muted playsinline loop preload="none" poster="assets/media/application-animation-poster.jpg" aria-label="FlowHMR motion retargeted to a Mixamo character in a reconstructed basketball scene" aria-describedby="application-animation-description">
+            <source src="assets/media/application-animation.mp4" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/application-animation.mp4">Download the animation application video.</a>
           </video>
         </div>
       </div>
@@ -140,7 +167,7 @@
   <dialog id="pipeline-dialog" aria-labelledby="pipeline-dialog-title">
     <div class="dialog-header"><h2 id="pipeline-dialog-title">FlowHMR pipeline</h2><button class="dialog-close" type="button" aria-label="Close pipeline diagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
     <div class="dialog-image"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="Enlarged FlowHMR pipeline diagram."></div>
-    <p class="dialog-note">Scroll to explore the full-resolution diagram. <a href="assets/media/pipeline.pdf" target="_blank" rel="noopener">Open PDF</a></p>
+    <p class="dialog-note">Scroll to explore the full-resolution diagram.</p>
   </dialog>
   <dialog id="results-dialog" aria-labelledby="results-dialog-title">
     <div class="dialog-header"><h2 id="results-dialog-title">Quantitative Results on Wild-4K</h2><button class="dialog-close" type="button" aria-label="Close results figure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>

@@ -50,52 +50,61 @@ foregroundVideos.forEach(player => {
 });
 syncBackgroundPlayback();
 
-const comparisonTabs = [...document.querySelectorAll('.comparison-tab')];
-const comparisonPlayers = [...document.querySelectorAll('.comparison-panel video')];
-let activeComparison = 0;
-let comparisonStarted = false;
-let comparisonShouldResume = false;
-function selectComparison(index, focus = false) {
-  activeComparison = index;
-  comparisonTabs.forEach((tab, tabIndex) => {
-    const selected = index === tabIndex;
-    tab.setAttribute('aria-selected', String(selected));
-    tab.tabIndex = selected ? 0 : -1;
-    document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
-    if (!selected) comparisonPlayers[tabIndex].pause();
-  });
-  if (focus) comparisonTabs[index].focus();
-  if (!reducedMotion.matches) {
-    comparisonStarted = true;
-    comparisonPlayers[index].play().catch(() => { /* Keep the poster and native play control. */ });
+// Keep each video tab group independent while sharing foreground playback rules.
+document.querySelectorAll('[data-video-tabs]').forEach(section => {
+  const tabs = [...section.querySelectorAll('[role="tab"]')];
+  const panels = tabs.map(tab => document.getElementById(tab.getAttribute('aria-controls')));
+  const players = panels.map(panel => panel.querySelector('video'));
+  let activeIndex = 0;
+  let started = false;
+  let shouldResume = false;
+  let inView = false;
+
+  function playActive() {
+    if (reducedMotion.matches || document.hidden) return;
+    started = true;
+    shouldResume = false;
+    players[activeIndex].play().catch(() => { /* Keep the poster and native play control. */ });
   }
-}
-comparisonTabs.forEach((tab, index) => {
-  tab.addEventListener('click', () => selectComparison(index));
-  tab.addEventListener('keydown', event => {
-    let target;
-    if (event.key === 'ArrowRight') target = (index + 1) % comparisonTabs.length;
-    if (event.key === 'ArrowLeft') target = (index - 1 + comparisonTabs.length) % comparisonTabs.length;
-    if (event.key === 'Home') target = 0;
-    if (event.key === 'End') target = comparisonTabs.length - 1;
-    if (target !== undefined) { event.preventDefault(); selectComparison(target, true); }
-  });
-});
-new IntersectionObserver(([entry]) => {
-  if (!entry.isIntersecting) {
-    comparisonShouldResume = !comparisonPlayers[activeComparison].paused;
-    comparisonPlayers.forEach(player => player.pause());
-  } else if ((!comparisonStarted || comparisonShouldResume) && !reducedMotion.matches) {
-    comparisonStarted = true;
-    comparisonShouldResume = false;
-    comparisonPlayers[activeComparison].play().catch(() => { /* Native controls remain available. */ });
+  function selectTab(index, focus = false) {
+    activeIndex = index;
+    tabs.forEach((tab, tabIndex) => {
+      const selected = index === tabIndex;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      panels[tabIndex].hidden = !selected;
+      if (!selected) players[tabIndex].pause();
+    });
+    if (focus) tabs[index].focus();
+    playActive();
   }
-}, { threshold: 0.25 }).observe(document.querySelector('.comparisons-section'));
-reducedMotion.addEventListener('change', event => {
-  if (event.matches) comparisonPlayers.forEach(player => player.pause());
-});
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) comparisonPlayers.forEach(player => player.pause());
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => selectTab(index));
+    tab.addEventListener('keydown', event => {
+      let target;
+      if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft') target = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === 'Home') target = 0;
+      if (event.key === 'End') target = tabs.length - 1;
+      if (target !== undefined) { event.preventDefault(); selectTab(target, true); }
+    });
+  });
+  new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    if (!inView) {
+      shouldResume ||= !players[activeIndex].paused;
+      players.forEach(player => player.pause());
+    } else if (!started || shouldResume) playActive();
+  }, { threshold: 0.25 }).observe(section);
+  reducedMotion.addEventListener('change', event => {
+    if (event.matches) players.forEach(player => player.pause());
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      shouldResume ||= !players[activeIndex].paused;
+      players.forEach(player => player.pause());
+    } else if (inView && shouldResume) playActive();
+  });
 });
 
 document.querySelectorAll('[data-figure-dialog]').forEach(opener => {
