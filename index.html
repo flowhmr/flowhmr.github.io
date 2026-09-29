@@ -22,7 +22,6 @@
       <a class="wordmark" href="#top" aria-label="FlowHMR home">FlowHMR</a>
       <div class="nav-links">
         <a href="#demo">Demo</a>
-        <a href="#abstract">Abstract</a>
         <a href="#method">Method</a>
         <a href="#results">Results</a>
         <a href="#application">Application</a>
@@ -75,17 +74,8 @@
       </figure>
     </section>
 
-    <section class="abstract-section section wrap" id="abstract" aria-labelledby="abstract-title">
-      <div class="section-heading"><span class="section-index">01 / Overview</span><h2 id="abstract-title">Abstract</h2></div>
-      <div class="abstract-copy">
-        <p>We present <strong>FlowHMR</strong>, a framework for recovering global 3D human motion from monocular video. Previous methods commonly learn to recover human poses and trajectories through geometric supervision. However, geometric reconstruction objectives do not explicitly account for the dynamics and contact constraints of human motion.</p>
-        <p>Our approach models the video-conditioned distribution of global human motion using <strong>Flow Matching</strong>. We train the model on a large collection of videos paired with 3D motion annotations and further optimize it through reinforcement learning, jointly rewarding reconstruction fidelity and accurate tracking in simulation.</p>
-        <p>To evaluate motion recovery performance, we introduce <strong>Wild-4K</strong>, a large and diverse evaluation set of internet videos. Experiments show that FlowHMR outperforms state-of-the-art methods in overall motion quality as judged by human evaluators and in simulation tracking performance. Our code will be made publicly available.</p>
-      </div>
-    </section>
-
     <section class="method-section section wrap" id="method" aria-labelledby="method-title">
-      <div class="section-heading centered"><span class="section-index">02 / Method</span><h2 id="method-title">Reconstruction meets physics.</h2><p>Learning motion from video, then refining it through simulation.</p></div>
+      <div class="section-heading centered"><span class="section-index">01 / Method</span><h2 id="method-title">Reconstruction meets physics.</h2><p>Learning motion from video, then refining it through simulation.</p></div>
       <figure class="paper-figure">
         <button class="figure-open" data-figure-dialog="pipeline-dialog" type="button" aria-label="Enlarge FlowHMR pipeline diagram" aria-haspopup="dialog">
           <picture><source srcset="assets/media/pipeline.webp" type="image/webp"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="FlowHMR pipeline: video-conditioned flow matching followed by reinforcement learning with reconstruction and simulation tracking rewards." loading="lazy"></picture>
@@ -100,7 +90,7 @@
     </section>
 
     <section class="results-section section wrap" id="results" aria-labelledby="results-title">
-      <div class="section-heading centered"><span class="section-index">03 / Evaluation</span><h2 id="results-title">Quantitative Results on Wild-4K</h2><p>Human preference and physics-based tracking performance.</p></div>
+      <div class="section-heading centered"><span class="section-index">02 / Evaluation</span><h2 id="results-title">Quantitative Results on Wild-4K</h2><p>Human preference and physics-based tracking performance.</p></div>
       <figure class="paper-figure results-figure">
         <button class="figure-open" data-figure-dialog="results-dialog" type="button" aria-label="Enlarge quantitative results figure" aria-haspopup="dialog">
           <picture><source srcset="assets/media/results-comparison.webp" type="image/webp"><img src="assets/media/results-comparison.png" width="3800" height="1468" alt="Two stacked bar charts show human preference for FlowHMR against GVHMR, PromptHMR, GENMO, DuoMo, and FlowHMR without RL, and tracking success across all six methods. FlowHMR achieves 82.47% tracking success under a fixed PHC+ controller." loading="lazy"></picture>
@@ -111,7 +101,7 @@
     </section>
 
     <section class="comparisons-section section wrap" id="comparisons" aria-labelledby="comparisons-title" data-video-tabs>
-      <div class="section-heading centered"><span class="section-index">04 / Qualitative results</span><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
+      <div class="section-heading centered"><span class="section-index">03 / Qualitative results</span><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
       <div class="media-tabs" role="tablist" aria-label="Qualitative comparison videos">
         <button id="comparison-tab-1" class="media-tab" type="button" role="tab" aria-selected="true" aria-controls="comparison-panel-1" tabindex="0">Push-up</button>
         <button id="comparison-tab-2" class="media-tab" type="button" role="tab" aria-selected="false" aria-controls="comparison-panel-2" tabindex="-1">Soccer kick</button>
@@ -135,7 +125,7 @@
     </section>
 
     <section class="application-section section wrap" id="application" aria-labelledby="application-title" data-video-tabs>
-      <div class="section-heading centered"><span class="section-index">05 / Applications</span><h2 id="application-title">Application</h2><p>From recovered motion to robots and animated characters.</p></div>
+      <div class="section-heading centered"><span class="section-index">04 / Applications</span><h2 id="application-title">Application</h2><p>From recovered motion to robots and animated characters.</p></div>
       <div class="media-tabs" role="tablist" aria-label="Application videos">
         <button id="application-tab-robotics" class="media-tab" type="button" role="tab" aria-selected="true" aria-controls="application-panel-robotics" tabindex="0">Data for Robotics</button>
         <button id="application-tab-animation" class="media-tab" type="button" role="tab" aria-selected="false" aria-controls="application-panel-animation" tabindex="-1">Animation Creation</button>
