@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="FlowHMR combines flow matching with physics-based reinforcement learning to recover faithful and physically plausible 3D human motion from monocular videos.">
+  <meta property="og:title" content="FlowHMR: Physically Plausible Motion Capture from Video">
+  <meta property="og:description" content="Recovering faithful and physically plausible global 3D human motion from monocular video with flow matching and physics-based reinforcement learning.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://flowhmr.github.io/">
+  <link rel="canonical" href="https://flowhmr.github.io/">
+  <link rel="icon" href="data:,">
+  <title>FlowHMR: Physically Plausible Motion Capture from Video</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="navigation wrap" aria-label="Main navigation">
+      <a class="wordmark" href="#top" aria-label="FlowHMR home">FlowHMR</a>
+      <div class="nav-links">
+        <a href="#demo">Demo</a>
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="paper-title">
+      <div class="hero-media" aria-hidden="true">
+        <video id="hero-video" muted playsinline loop preload="metadata" poster="assets/media/hero-poster.jpg" tabindex="-1" disablepictureinpicture>
+          <source src="assets/media/hero-loop.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-content wrap">
+      <p class="eyebrow">Flow matching meets physics</p>
+      <h1 id="paper-title" aria-label="FlowHMR: Physically Plausible Motion Capture from Video"><span class="project-name">FlowHMR<span class="title-colon">:</span></span><span class="paper-title">Physically Plausible<br class="desktop-break"> Motion Capture from Video</span></h1>
+      <p class="hero-description">Faithful reconstruction. Physically plausible motion.</p>
+      <div class="resource-links" aria-label="Project resources">
+        <a class="watch-button" href="#demo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg>Watch the video</a>
+        <button class="resource-button" type="button" disabled aria-label="Paper — coming soon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 12h8M8 16h6"/></svg>
+          <span>Paper</span><span class="soon">Coming soon</span>
+        </button>
+        <a class="resource-button" href="https://github.com/flowhmr/flowhmr" target="_blank" rel="noopener noreferrer" aria-label="Code on GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></svg>
+          <span>Code</span>
+        </a>
+      </div>
+      </div>
+      <div class="hero-bottom wrap"><p>Monocular video <span aria-hidden="true">/</span> Global 3D human motion</p><button class="hero-video-toggle" type="button" aria-label="Play background video" data-state="paused" hidden><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Play background</span></button></div>
+    </section>
+
+    <section class="tldr-section wrap" aria-label="TL;DR">
+      <span class="tldr-label">TL;DR</span>
+      <p class="tldr">FlowHMR combines <strong>flow matching</strong> with <strong>physics-based reinforcement learning</strong> to recover faithful and physically plausible 3D human motion from monocular videos.</p>
+    </section>
+
+    <section class="demo-section wrap" id="demo" aria-label="FlowHMR demonstration">
+      <div class="demo-heading"><h2>FlowHMR in motion</h2><span>Full demonstration · 1 min 23 s</span></div>
+      <figure class="demo-figure">
+        <div class="video-frame">
+          <video id="demo-video" controls playsinline preload="none" poster="assets/media/demo-poster.jpg" aria-label="FlowHMR video demonstration" aria-describedby="video-caption">
+            <source src="assets/media/flowhmr-demo.mp4" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/flowhmr-demo.mp4">Download the demonstration video.</a>
+          </video>
+        </div>
+        <figcaption id="video-caption"><span>Recovering global 3D human motion from monocular video.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="abstract-section section wrap" id="abstract" aria-labelledby="abstract-title">
+      <div class="section-heading"><span class="section-index">01 / Overview</span><h2 id="abstract-title">Abstract</h2></div>
+      <div class="abstract-copy">
+        <p>We present <strong>FlowHMR</strong>, a framework for recovering global 3D human motion from monocular video. Previous methods commonly learn to recover human poses and trajectories through geometric supervision. However, geometric reconstruction objectives do not explicitly account for the dynamics and contact constraints of human motion.</p>
+        <p>Our approach models the video-conditioned distribution of global human motion using <strong>Flow Matching</strong>. We train the model on a large collection of videos paired with 3D motion annotations and further optimize it through reinforcement learning, jointly rewarding reconstruction fidelity and accurate tracking in simulation.</p>
+        <p>To evaluate motion recovery performance, we introduce <strong>Wild-4K</strong>, a large and diverse evaluation set of internet videos. Experiments show that FlowHMR outperforms state-of-the-art methods in overall motion quality as judged by human evaluators and in simulation tracking performance. Our code will be made publicly available.</p>
+      </div>
+    </section>
+
+    <section class="method-section section wrap" id="method" aria-labelledby="method-title">
+      <div class="section-heading centered"><span class="section-index">02 / Method</span><h2 id="method-title">Reconstruction meets physics.</h2><p>Learning motion from video, then refining it through simulation.</p></div>
+      <figure class="paper-figure">
+        <button class="figure-open" data-figure-dialog="pipeline-dialog" type="button" aria-label="Enlarge FlowHMR pipeline diagram" aria-haspopup="dialog">
+          <picture><source srcset="assets/media/pipeline.webp" type="image/webp"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="FlowHMR pipeline: video-conditioned flow matching followed by reinforcement learning with reconstruction and simulation tracking rewards." loading="lazy"></picture>
+          <span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg>Enlarge figure</span>
+        </button>
+        <figcaption><span>Overview of the FlowHMR framework.</span><a href="assets/media/pipeline.pdf" target="_blank" rel="noopener">View PDF</a></figcaption>
+      </figure>
+      <div class="method-details">
+        <article><span class="step-number">01</span><h3>Video-conditioned flow matching</h3><p>Learn the distribution of global human motion from a large collection of videos paired with 3D motion annotations.</p></article>
+        <article><span class="step-number">02</span><h3>Physics-based reinforcement learning</h3><p>Further optimize the model by jointly rewarding reconstruction fidelity and accurate motion tracking in simulation.</p></article>
+      </div>
+    </section>
+
+    <section class="results-section section wrap" id="results" aria-labelledby="results-title">
+      <div class="section-heading centered"><span class="section-index">03 / Evaluation</span><h2 id="results-title">Quantitative Results on Wild-4K</h2><p>Human preference and physics-based tracking performance.</p></div>
+      <figure class="paper-figure results-figure">
+        <button class="figure-open" data-figure-dialog="results-dialog" type="button" aria-label="Enlarge quantitative results figure" aria-haspopup="dialog">
+          <picture><source srcset="assets/media/results-comparison.webp" type="image/webp"><img src="assets/media/results-comparison.png" width="3800" height="1468" alt="Two stacked bar charts show human preference for FlowHMR against GVHMR, PromptHMR, GENMO, DuoMo, and FlowHMR without RL, and tracking success across all six methods. FlowHMR achieves 82.47% tracking success under a fixed PHC+ controller." loading="lazy"></picture>
+          <span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg>Enlarge figure</span>
+        </button>
+        <figcaption><span>Human preference comparisons and tracking success rates under a fixed PHC+ controller.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="comparisons-section section wrap" id="comparisons" aria-labelledby="comparisons-title">
+      <div class="section-heading centered"><span class="section-index">04 / Qualitative results</span><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
+      <div class="comparison-tabs" role="tablist" aria-label="Qualitative comparison videos">
+        <button id="comparison-tab-1" class="comparison-tab" type="button" role="tab" aria-selected="true" aria-controls="comparison-panel-1" tabindex="0">Push-up</button>
+        <button id="comparison-tab-2" class="comparison-tab" type="button" role="tab" aria-selected="false" aria-controls="comparison-panel-2" tabindex="-1">Soccer kick</button>
+      </div>
+      <div id="comparison-panel-1" class="comparison-panel" role="tabpanel" aria-labelledby="comparison-tab-1" tabindex="0">
+        <div class="video-frame">
+          <video id="comparison-video-1" controls muted playsinline loop preload="none" poster="assets/media/comparison-1-poster.jpg" aria-label="Push-up qualitative comparison">
+            <source src="assets/media/comparison-1.mp4" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/comparison-1.mp4">Download the push-up comparison.</a>
+          </video>
+        </div>
+      </div>
+      <div id="comparison-panel-2" class="comparison-panel" role="tabpanel" aria-labelledby="comparison-tab-2" tabindex="0" hidden>
+        <div class="video-frame">
+          <video id="comparison-video-2" controls muted playsinline loop preload="none" poster="assets/media/comparison-2-poster.jpg" aria-label="Soccer kick qualitative comparison">
+            <source src="assets/media/comparison-2.mp4" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/comparison-2.mp4">Download the soccer kick comparison.</a>
+          </video>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer wrap"><a class="footer-brand" href="#top" aria-label="Back to top">FlowHMR</a><p>Physically Plausible Motion Capture from Video</p><span>Paper coming soon</span></footer>
+
+  <dialog id="pipeline-dialog" aria-labelledby="pipeline-dialog-title">
+    <div class="dialog-header"><h2 id="pipeline-dialog-title">FlowHMR pipeline</h2><button class="dialog-close" type="button" aria-label="Close pipeline diagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="dialog-image"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="Enlarged FlowHMR pipeline diagram."></div>
+    <p class="dialog-note">Scroll to explore the full-resolution diagram. <a href="assets/media/pipeline.pdf" target="_blank" rel="noopener">Open PDF</a></p>
+  </dialog>
+  <dialog id="results-dialog" aria-labelledby="results-dialog-title">
+    <div class="dialog-header"><h2 id="results-dialog-title">Quantitative Results on Wild-4K</h2><button class="dialog-close" type="button" aria-label="Close results figure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="dialog-image"><img src="assets/media/results-comparison.png" width="3800" height="1468" alt="Enlarged comparison of human preference and tracking success. FlowHMR achieves 82.47% tracking success under a fixed PHC+ controller."></div>
+    <p class="dialog-note">Scroll to explore the full-resolution figure.</p>
+  </dialog>
+</body>
+</html>
