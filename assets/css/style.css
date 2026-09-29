@@ -144,13 +144,16 @@ dialog{width:min(1440px,94vw);max-height:94dvh;max-width:none;padding:0;border:1
 
 .application-section .section-heading{margin-bottom:28px}
 .application-section h2{font-size:clamp(30px,3.1vw,42px);font-weight:620;letter-spacing:-1.3px}
-.application-section .media-tabs{margin-bottom:24px}
-.application-description{max-width:900px;margin:0 auto 28px;text-align:center;color:#46575f;font-size:17px;line-height:1.8;text-wrap:pretty}
+.application-description{margin:0;color:#46575f;font-size:16px;line-height:1.75;text-wrap:pretty}
 .application-description a{font-weight:600;text-decoration:underline;text-decoration-color:#9fc6c2;text-underline-offset:4px}
 .application-description a:hover{text-decoration-color:var(--accent)}
 @media(max-width:520px){
   .application-section h2{font-size:29px;letter-spacing:-.9px}
-  .application-section .media-tabs{gap:9px;margin-bottom:20px}
-  .application-section .media-tab{padding-inline:10px}
-  .application-description{font-size:16px;line-height:1.75;text-align:left;margin-bottom:22px}
 }
+
+.application-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;align-items:start}
+.application-card{margin:0;min-width:0}
+.application-card .video-frame{box-shadow:none}
+.application-card figcaption{padding-top:20px}
+.application-card h3{margin:0 0 10px;font-size:22px;line-height:1.35;letter-spacing:-.5px;font-weight:600}
+@media(max-width:700px){.application-grid{grid-template-columns:1fr;gap:34px}.application-card figcaption{padding-top:16px}.application-card h3{font-size:21px}}

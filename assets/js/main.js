@@ -119,7 +119,11 @@ new IntersectionObserver(([entry]) => {
 foregroundVideos.forEach(player => {
   player.addEventListener('play', () => {
     if (document.hidden || !isSelected(player)) { player.pause(); return; }
-    foregroundVideos.forEach(other => { if (other !== player) other.pause(); });
+    const gallery = player.closest('[data-video-gallery]');
+    foregroundVideos.forEach(other => {
+      const sharesGallery = gallery && other.closest('[data-video-gallery]') === gallery;
+      if (other !== player && !sharesGallery) other.pause();
+    });
     syncBackgroundPlayback();
   });
   player.addEventListener('pause', syncBackgroundPlayback);
@@ -127,11 +131,11 @@ foregroundVideos.forEach(player => {
 });
 syncBackgroundPlayback();
 
-// Keep each video tab group independent while sharing foreground playback rules.
-document.querySelectorAll('[data-video-tabs]').forEach(section => {
-  const tabs = [...section.querySelectorAll('[role="tab"]')];
+// Tabs and gallery videos share lazy autoplay, pause, and visibility behavior.
+document.querySelectorAll('[data-video-tabs], video[data-autoplay-video]').forEach(container => {
+  const tabs = [...container.querySelectorAll('[role="tab"]')];
   const panels = tabs.map(tab => document.getElementById(tab.getAttribute('aria-controls')));
-  const players = panels.map(panel => panel.querySelector('video'));
+  const players = tabs.length ? panels.map(panel => panel.querySelector('video')) : [container];
   let activeIndex = 0;
   let started = false;
   let shouldResume = false;
