@@ -7,10 +7,10 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 const $ = selector => root.querySelector(selector);
 const ui = root && {
-  card: $('.mv-card'), category: $('[data-mv-category]'), title: $('[data-mv-title]'),
+  card: $('.mv-card'),
   stage: $('[data-mv-canvas]'), video: $('[data-mv-video]'), loading: $('[data-mv-loading]'),
-  play: $('[data-mv-play]'), prev: $('[data-mv-prev]'), next: $('[data-mv-next]'), scrub: $('[data-mv-scrub]'),
-  time: $('[data-mv-time]'), speed: $('[data-mv-speed]'), follow: $('[data-mv-follow]'), reset: $('[data-mv-reset]'),
+  play: $('[data-mv-play]'), scrub: $('[data-mv-scrub]'),
+  follow: $('[data-mv-follow]'), reset: $('[data-mv-reset]'),
   gallery: $('[data-mv-gallery]'),
   stripPrev: $('[data-mv-strip-prev]'), stripNext: $('[data-mv-strip-next]'),
 };
@@ -463,7 +463,6 @@ function applyPose(f) {
   for (const { rig } of scenes) rig.position.set(pelvis.x, pelvis.y, 0);
   for (const trail of trails) trail.progress.geometry.setDrawRange(0, Math.floor(f) * 6);
   ui.scrub.value = String(Math.round(f));
-  ui.time.textContent = `${(f / FPS).toFixed(2)} / ${(R / FPS).toFixed(2)} s`;
 }
 
 function resetCamera() {
@@ -523,7 +522,7 @@ async function play() {
   video.defaultMuted = true;
   video.playsInline = true;
   video.autoplay = wantPlay;
-  video.playbackRate = Number(ui.speed.value);
+  video.playbackRate = 1;
   const attempt = video.play();
   playPending = attempt;
   try { await attempt; } catch { /* Retry on readiness, visibility, or a viewer tap. */ }
@@ -557,10 +556,7 @@ function bindControls() {
   ui.play.addEventListener('click', () => {
     if (video.paused) { wantPlay = true; play(); } else pause();
   });
-  ui.prev.addEventListener('click', () => { pause(); seek(frame - 1); });
-  ui.next.addEventListener('click', () => { pause(); seek(frame + 1); });
   ui.scrub.addEventListener('input', () => { pause(); seek(Number(ui.scrub.value)); });
-  ui.speed.addEventListener('change', () => { video.playbackRate = Number(ui.speed.value); });
   ui.follow.addEventListener('click', () => {
     following = !following;
     ui.follow.setAttribute('aria-pressed', String(following));
@@ -569,8 +565,6 @@ function bindControls() {
   ui.card.addEventListener('keydown', event => {
     if (event.target.closest('button, select, input')) return;
     if (event.code === 'Space') { event.preventDefault(); ui.play.click(); }
-    if (event.code === 'ArrowRight') { event.preventDefault(); ui.next.click(); }
-    if (event.code === 'ArrowLeft') { event.preventDefault(); ui.prev.click(); }
   });
 }
 
@@ -585,8 +579,7 @@ async function select(id, { play: start = false } = {}) {
     return;
   }
   const mine = ++token;
-  ui.category.textContent = item.category;
-  ui.title.textContent = item.title;
+  ui.video.setAttribute('aria-label', `Input video: ${item.title}`);
   showMessage('Loading motion…');
   const video = ui.video;
   video.pause();

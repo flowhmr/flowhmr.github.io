@@ -12,26 +12,14 @@
   <link rel="canonical" href="https://flowhmr.github.io/">
   <link rel="icon" href="data:,">
   <title>FlowHMR: Physically Plausible Motion Capture from Video</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=1053b7282c">
-  <script src="assets/js/main.js?v=04905613b7" defer></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=5b116563a7">
+  <script src="assets/js/main.js?v=8f2f5e5d9a" defer></script>
+  <script src="assets/js/demo-player.js?v=64a44bbfa8" defer></script>
   <script type="importmap">{"imports":{"three":"./assets/vendor/three/build/three.module.js","three/addons/":"./assets/vendor/three/examples/jsm/"}}</script>
-  <script type="module" src="assets/js/motion-viewer.js?v=3e55b24a75"></script>
+  <script type="module" src="assets/js/motion-viewer.js?v=0f2a808241"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <nav class="navigation wrap" aria-label="Main navigation">
-      <a class="wordmark" href="#top" aria-label="FlowHMR home">FlowHMR</a>
-      <div class="nav-links">
-        <a href="#demo">Demo</a>
-        <a href="#viewer">3D Viewer</a>
-        <a href="#application">Application</a>
-        <a href="#results">Results</a>
-        <a href="#method">Method</a>
-      </div>
-    </nav>
-  </header>
-
   <main id="main">
     <section class="hero" id="top" aria-labelledby="paper-title">
       <div class="hero-media" aria-hidden="true">
@@ -41,89 +29,85 @@
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-content wrap">
-      <h1 id="paper-title" aria-label="FlowHMR: Physically Plausible Motion Capture from Video"><span class="project-name">FlowHMR<span class="title-colon">:</span></span><span class="paper-title">Physically Plausible<br class="desktop-break"> Motion Capture from Video</span></h1>
+      <h1 id="paper-title"><span class="project-name">FlowHMR</span></h1>
       <div class="resource-links" aria-label="Project resources">
-        <a class="watch-button" href="#demo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg>Watch the video</a>
-        <button class="resource-button" type="button" disabled aria-label="Paper — coming soon">
+        <a class="watch-button" href="#demo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg>Demo</a>
+        <a class="resource-button" href="" data-placeholder-link aria-label="Paper">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 12h8M8 16h6"/></svg>
-          <span>Paper</span><span class="soon">Coming soon</span>
-        </button>
+          <span>Paper</span>
+        </a>
         <a class="resource-button" href="https://github.com/flowhmr/flowhmr" target="_blank" rel="noopener noreferrer" aria-label="Code on GitHub">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></svg>
+          <img class="brand-icon" src="assets/icons/github.svg?v=242fc1c789" width="20" height="20" alt="">
           <span>Code</span>
         </a>
         <a class="resource-button" href="https://huggingface.co/fafsaf1/flowhmr-0.46B" target="_blank" rel="noopener noreferrer" aria-label="Model on Hugging Face">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg>
+          <img class="brand-icon" src="assets/icons/huggingface.svg?v=c2b0b725ed" width="20" height="20" alt="">
           <span>Model</span>
         </a>
       </div>
       </div>
-      <div class="hero-bottom wrap"><p>Monocular video <span aria-hidden="true">/</span> Global 3D human motion</p><button class="hero-video-toggle" type="button" aria-label="Play background video" data-state="paused" hidden><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Play background</span></button></div>
     </section>
 
     <section class="tldr-section wrap" aria-label="TL;DR">
       <span class="tldr-label">TL;DR</span>
       <div class="tldr-copy">
-        <p class="tldr"><strong>flow matching</strong> + <strong>physics-based RL</strong> &rarr; faithful &amp; physically plausible 3D motion</p>
-        <p class="tldr-detail">Accurate poses, challenging motions, long-range movement, finger articulation, and robustness to diverse inputs.</p>
+        <p class="tldr"><strong>Flow matching</strong> + <strong>physics-based GRPO</strong> &rarr; physically plausible 3D motion</p>
       </div>
     </section>
 
     <section class="demo-section wrap" id="demo" aria-label="FlowHMR demonstration">
-      <div class="demo-heading"><h2>FlowHMR in motion</h2></div>
-      <figure class="demo-figure">
+      <figure class="demo-figure mv-card" data-demo-player>
         <div class="video-frame">
-          <video id="demo-video" controls playsinline preload="none" poster="assets/media/demo-poster.jpg" aria-label="FlowHMR video demonstration" aria-describedby="video-caption">
+          <button class="demo-sound-button" type="button" data-demo-mute aria-label="Sounds on — mute" aria-pressed="false" aria-controls="demo-video" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4z"/><path class="volume-on" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="volume-off" d="m16 9 6 6m0-6-6 6"/></svg><span data-demo-sound-label>Sounds on</span></button>
+          <video id="demo-video" controls playsinline tabindex="0" preload="none" poster="assets/media/demo-poster.jpg" aria-label="FlowHMR video demonstration">
             <source data-src="assets/media/flowhmr-demo.mp4" type="video/mp4">
             Your browser does not support embedded video. <a href="assets/media/flowhmr-demo.mp4">Download the demonstration video.</a>
           </video>
         </div>
-        <figcaption id="video-caption"><span>Recovering global 3D human motion from monocular video.</span></figcaption>
+        <div class="mv-controls demo-controls" data-demo-controls role="group" aria-label="Demo playback controls" hidden>
+          <button class="mv-button mv-play" type="button" data-demo-play data-state="paused" aria-label="Play" aria-controls="demo-video"><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg></button>
+          <input class="mv-scrub" type="range" min="0" max="0" step="0.01" value="0" data-demo-scrub aria-label="Timeline" aria-controls="demo-video" disabled>
+          <button class="mv-button demo-icon-button" type="button" data-demo-fullscreen aria-label="Enter fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+        </div>
+        <p class="demo-error" data-demo-error role="status" hidden></p>
       </figure>
     </section>
 
     <section class="viewer-section section wrap" id="viewer" aria-labelledby="viewer-title">
-      <div class="section-heading centered"><span class="section-index">01 / Interactive results</span><h2 id="viewer-title">Explore in <span>3D</span></h2><p>Generated motion and its physics-based tracking in simulation, played in sync with the input video.</p></div>
+      <div class="section-heading centered"><h2 id="viewer-title">Explore in <span>3D</span></h2></div>
       <div class="motion-viewer" data-motion-viewer data-manifest="assets/viewer/manifest.json">
         <div class="mv-strip">
-          <button class="mv-strip-arrow mv-strip-prev" type="button" data-mv-strip-prev aria-label="Previous clip">&#8249;</button>
+          <button class="mv-strip-arrow mv-strip-prev" type="button" data-mv-strip-prev aria-label="Previous clip"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
           <div class="mv-strip-track" data-mv-gallery role="group" aria-label="Clips. Use the left and right arrow keys to switch."></div>
-          <button class="mv-strip-arrow mv-strip-next" type="button" data-mv-strip-next aria-label="Next clip">&#8250;</button>
+          <button class="mv-strip-arrow mv-strip-next" type="button" data-mv-strip-next aria-label="Next clip"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
         </div>
         <div class="mv-card">
-          <div class="mv-header">
-            <div class="mv-heading"><span class="mv-category" data-mv-category>&nbsp;</span><span class="mv-title" data-mv-title>Loading…</span></div>
-            <span class="mv-hint">Drag to orbit · Scroll to zoom · Right-drag to pan</span>
-          </div>
           <div class="mv-stage">
             <div class="mv-video-panel">
               <span class="mv-label">Input<small>Monocular video</small></span>
               <video data-mv-video muted playsinline loop preload="auto" disablepictureinpicture aria-label="Input video for the selected clip"></video>
             </div>
-            <div class="mv-canvas" data-mv-canvas tabindex="0" aria-label="3D viewer. Space plays or pauses, arrow keys step frames.">
+            <div class="mv-canvas" data-mv-canvas tabindex="0" aria-label="3D viewer. Space plays or pauses." aria-describedby="mv-interaction-hint">
               <div class="mv-labels" aria-hidden="true"><span><i class="mv-dot is-smpl"></i>Generated<small>FlowHMR motion</small></span><span><i class="mv-dot is-phc"></i>Simulated<small>PHC tracking</small></span></div>
               <div class="mv-loading" data-mv-loading role="status">Loading 3D viewer…</div>
             </div>
           </div>
           <div class="mv-controls">
             <button class="mv-button mv-play" type="button" data-mv-play data-state="paused" aria-label="Play"><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg></button>
-            <button class="mv-button mv-step" type="button" data-mv-prev aria-label="Previous frame">&#8249;</button>
-            <button class="mv-button mv-step" type="button" data-mv-next aria-label="Next frame">&#8250;</button>
-            <output class="mv-time" data-mv-time>0.00 / 0.00 s</output>
             <input class="mv-scrub" type="range" min="0" max="0" step="1" value="0" data-mv-scrub aria-label="Timeline">
-            <select class="mv-button mv-speed" data-mv-speed aria-label="Playback speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option></select>
             <button class="mv-button mv-toggle" type="button" data-mv-follow aria-pressed="true">Follow</button>
             <button class="mv-button" type="button" data-mv-reset>Reset view</button>
           </div>
+          <p class="mv-hint" id="mv-interaction-hint">Drag to orbit · Scroll to zoom · Right-drag to pan</p>
         </div>
       </div>
     </section>
 
     <section class="comparisons-section section wrap" id="comparisons" aria-labelledby="comparisons-title">
-      <div class="section-heading centered"><span class="section-index">02 / Qualitative results</span><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
+      <div class="section-heading centered"><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
       <div class="video-carousel">
-      <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous video">&#8249;</button>
-      <button class="carousel-arrow carousel-next" type="button" aria-label="Next video">&#8250;</button>
+      <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+      <button class="carousel-arrow carousel-next" type="button" aria-label="Next video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
       <div class="application-grid" data-video-gallery tabindex="0" aria-label="Video carousel">
         <figure class="application-card">
           <div class="video-frame">
@@ -142,15 +126,14 @@
           </div>
         </figure>
       </div>
-      <p class="carousel-status" aria-live="polite"></p>
       </div>
     </section>
 
     <section class="application-section section wrap" id="application" aria-labelledby="application-title">
-      <div class="section-heading centered"><span class="section-index">03 / Applications</span><h2 id="application-title">Application</h2></div>
+      <div class="section-heading centered"><h2 id="application-title">More Application</h2></div>
       <div class="video-carousel">
-      <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous video">&#8249;</button>
-      <button class="carousel-arrow carousel-next" type="button" aria-label="Next video">&#8250;</button>
+      <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+      <button class="carousel-arrow carousel-next" type="button" aria-label="Next video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
       <div class="application-grid" data-video-gallery tabindex="0" aria-label="Video carousel">
         <figure class="application-card">
           <div class="video-frame">
@@ -177,47 +160,10 @@
           </figcaption>
         </figure>
       </div>
-      <p class="carousel-status" aria-live="polite"></p>
-      </div>
-    </section>
-
-    <section class="results-section section wrap" id="results" aria-labelledby="results-title">
-      <div class="section-heading centered"><span class="section-index">04 / Evaluation</span><h2 id="results-title">Quantitative Results on Wild-4K</h2><p>Human preference and physics-based tracking performance.</p></div>
-      <figure class="paper-figure results-figure">
-        <button class="figure-open" data-figure-dialog="results-dialog" type="button" aria-label="Enlarge quantitative results figure" aria-haspopup="dialog">
-          <picture><source srcset="assets/media/results-comparison.webp" type="image/webp"><img src="assets/media/results-comparison.png" width="3800" height="1468" alt="Two stacked bar charts show human preference for FlowHMR against GVHMR, PromptHMR, GENMO, DuoMo, and FlowHMR without RL, and tracking success across all six methods. FlowHMR achieves 82.47% tracking success under a fixed PHC+ controller." loading="lazy"></picture>
-          <span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg>Enlarge figure</span>
-        </button>
-      </figure>
-    </section>
-
-    <section class="method-section section wrap" id="method" aria-labelledby="method-title">
-      <div class="section-heading centered"><span class="section-index">05 / Method</span><h2 id="method-title">Reconstruction meets physics.</h2></div>
-      <figure class="paper-figure">
-        <button class="figure-open" data-figure-dialog="pipeline-dialog" type="button" aria-label="Enlarge FlowHMR pipeline diagram" aria-haspopup="dialog">
-          <picture><source srcset="assets/media/pipeline.webp" type="image/webp"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="FlowHMR pipeline: video-conditioned flow matching followed by reinforcement learning with reconstruction and simulation tracking rewards." loading="lazy"></picture>
-          <span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg>Enlarge figure</span>
-        </button>
-        <figcaption><span>Overview of the FlowHMR framework.</span></figcaption>
-      </figure>
-      <div class="method-details">
-        <article><span class="step-number">01</span><h3>Video-conditioned flow matching</h3><p>Learn the distribution of global human motion from a large collection of videos paired with 3D motion annotations.</p></article>
-        <article><span class="step-number">02</span><h3>Physics-based reinforcement learning</h3><p>Further optimize the model by jointly rewarding reconstruction fidelity and accurate motion tracking in simulation.</p></article>
       </div>
     </section>
 
   </main>
 
-
-  <dialog id="pipeline-dialog" aria-labelledby="pipeline-dialog-title">
-    <div class="dialog-header"><h2 id="pipeline-dialog-title">FlowHMR pipeline</h2><button class="dialog-close" type="button" aria-label="Close pipeline diagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
-    <div class="dialog-image"><img src="assets/media/pipeline.png" width="3500" height="1952" alt="Enlarged FlowHMR pipeline diagram."></div>
-    <p class="dialog-note">Scroll to explore the full-resolution diagram.</p>
-  </dialog>
-  <dialog id="results-dialog" aria-labelledby="results-dialog-title">
-    <div class="dialog-header"><h2 id="results-dialog-title">Quantitative Results on Wild-4K</h2><button class="dialog-close" type="button" aria-label="Close results figure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
-    <div class="dialog-image"><img src="assets/media/results-comparison.png" width="3800" height="1468" alt="Enlarged comparison of human preference and tracking success. FlowHMR achieves 82.47% tracking success under a fixed PHC+ controller."></div>
-    <p class="dialog-note">Scroll to explore the full-resolution figure.</p>
-  </dialog>
 </body>
 </html>

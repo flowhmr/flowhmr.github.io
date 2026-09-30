@@ -3,7 +3,6 @@
 const video = document.querySelector('#demo-video');
 const foregroundVideos = [...document.querySelectorAll('.video-frame video')];
 const heroVideo = document.querySelector('#hero-video');
-const heroToggle = document.querySelector('.hero-video-toggle');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let wantsBackgroundMotion = !reducedMotion.matches;
 let heroVisible = false;
@@ -34,17 +33,15 @@ function isSelected(player) {
 }
 function visibleFraction(player) {
   const bounds = player.getBoundingClientRect();
-  const headerBottom = document.querySelector('.site-header').getBoundingClientRect().bottom;
-  const visibleHeight = Math.max(0, Math.min(bounds.bottom, innerHeight) - Math.max(bounds.top, headerBottom));
+  const visibleHeight = Math.max(0, Math.min(bounds.bottom, innerHeight) - Math.max(bounds.top, 0));
   return bounds.height ? visibleHeight / bounds.height : 0;
 }
 
 // Prepare only nearby foreground videos; hidden tabs retain just their posters.
 const pendingLoads = new Map();
-const headerHeight = Math.ceil(document.querySelector('.site-header').getBoundingClientRect().height);
 function isNearby(player) {
   const bounds = player.getBoundingClientRect();
-  return isSelected(player) && bounds.bottom > document.querySelector('.site-header').getBoundingClientRect().bottom && bounds.top < innerHeight + 240;
+  return isSelected(player) && bounds.bottom > 0 && bounds.top < innerHeight + 240;
 }
 function schedulePreparation(player) {
   pendingLoads.get(player)?.();
@@ -63,7 +60,7 @@ const nearbyVideos = new IntersectionObserver(entries => {
       pendingLoads.delete(entry.target);
     }
   });
-}, { rootMargin: `-${headerHeight}px 0px 240px 0px`, threshold: 0 });
+}, { rootMargin: '0px 0px 240px 0px', threshold: 0 });
 document.addEventListener('visibilitychange', () => {
   pendingLoads.forEach(cancel => cancel());
   pendingLoads.clear();
@@ -76,12 +73,7 @@ foregroundVideos.forEach(player => {
 });
 let cancelHeroStart = () => {};
 
-function updatePlaybackButton() {
-  const paused = heroVideo.paused;
-  heroToggle.dataset.state = paused ? 'paused' : 'playing';
-  heroToggle.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} background video`);
-  heroToggle.querySelector('span').textContent = `${paused ? 'Play' : 'Pause'} background`;
-}
+
 function syncBackgroundPlayback(immediate = false) {
   cancelHeroStart();
   const eligible = () => wantsBackgroundMotion && heroVisible && !document.hidden &&
@@ -90,22 +82,14 @@ function syncBackgroundPlayback(immediate = false) {
   if (!heroVideo.paused) return;
   const play = () => {
     prepareVideo(heroVideo);
-    heroVideo.play().catch(updatePlaybackButton);
+    heroVideo.play().catch(() => { /* Keep the poster if autoplay is blocked. */ });
   };
   if (immediate === true) play();
   else cancelHeroStart = afterScrollSettles(play, eligible);
 }
-heroToggle.hidden = false;
-heroVideo.addEventListener('play', updatePlaybackButton);
-heroVideo.addEventListener('pause', updatePlaybackButton);
-heroToggle.addEventListener('click', () => {
-  wantsBackgroundMotion = heroVideo.paused;
-  if (wantsBackgroundMotion) foregroundVideos.forEach(player => player.pause());
-  syncBackgroundPlayback(true);
-});
 document.querySelector('.watch-button').addEventListener('click', () => {
   prepareVideo(video);
-  video.play().catch(() => { /* Native controls remain available if playback is blocked. */ });
+  video.play().catch(() => { /* The custom play button remains available if playback is blocked. */ });
 });
 reducedMotion.addEventListener('change', event => {
   wantsBackgroundMotion = !event.matches;
@@ -115,7 +99,7 @@ document.addEventListener('visibilitychange', syncBackgroundPlayback);
 new IntersectionObserver(([entry]) => {
   heroVisible = entry.isIntersecting && entry.intersectionRatio >= 0.05;
   syncBackgroundPlayback();
-}, { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0.05 }).observe(document.querySelector('.hero'));
+}, { rootMargin: '0px', threshold: 0.05 }).observe(document.querySelector('.hero'));
 foregroundVideos.forEach(player => {
   player.addEventListener('play', () => {
     if (document.hidden || !isSelected(player)) { player.pause(); return; }
@@ -149,7 +133,6 @@ document.querySelectorAll('.video-carousel').forEach(carousel => {
       if (i !== active) player.pause();
       else player.dispatchEvent(new Event('carouselactivate'));
     });
-    carousel.querySelector('.carousel-status').textContent = `${active + 1} / ${cards.length}`;
   }
   function move(delta) {
     const next = cards[(active + delta + cards.length) % cards.length];
@@ -224,7 +207,7 @@ document.querySelectorAll('[data-video-tabs], video[data-autoplay-video]').forEa
         players.forEach(player => player.pause());
       } else if (!started || shouldResume) scheduleActive();
     });
-  }, { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: [0, 0.25] });
+  }, { rootMargin: '0px', threshold: [0, 0.25] });
   players.forEach(player => {
     visibilityObserver.observe(player);
     player.addEventListener('carouselactivate', () => {
@@ -255,43 +238,7 @@ document.querySelectorAll('[data-video-tabs], video[data-autoplay-video]').forEa
   });
 });
 
-document.querySelectorAll('[data-figure-dialog]').forEach(opener => {
-  const diagram = document.getElementById(opener.dataset.figureDialog);
-  let previousOverflow = '';
-  opener.addEventListener('click', () => {
-    previousOverflow = document.body.style.overflow;
-    diagram.showModal();
-    document.body.style.overflow = 'hidden';
-  });
-  diagram.querySelector('.dialog-close').addEventListener('click', () => diagram.close());
-  diagram.addEventListener('click', event => {
-    if (event.target === diagram) {
-      const bounds = diagram.getBoundingClientRect();
-      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) diagram.close();
-    }
-  });
-  diagram.addEventListener('close', () => {
-    document.body.style.overflow = previousOverflow;
-    opener.focus({ preventScroll: true });
-  });
+// Keep the paper placeholder in place until a publication URL is available.
+document.querySelectorAll('[data-placeholder-link]').forEach(link => {
+  link.addEventListener('click', event => event.preventDefault());
 });
-
-const navigation = [...document.querySelectorAll('.nav-links a')];
-const sections = navigation.map(link => document.querySelector(link.getAttribute('href')));
-let scheduled = false;
-function updateNavigation() {
-  let current = null;
-  for (const section of sections) {
-    if (section.getBoundingClientRect().top <= window.innerHeight * 0.42) current = section.id;
-  }
-  for (const link of navigation) {
-    if (link.hash === `#${current}`) link.setAttribute('aria-current', 'location');
-    else link.removeAttribute('aria-current');
-  }
-  scheduled = false;
-}
-window.addEventListener('scroll', () => {
-  if (!scheduled) { scheduled = true; requestAnimationFrame(updateNavigation); }
-}, { passive: true });
-window.addEventListener('resize', updateNavigation);
-updateNavigation();
