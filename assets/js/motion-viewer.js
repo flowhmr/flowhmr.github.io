@@ -179,7 +179,7 @@ async function setup() {
   camera = new THREE.PerspectiveCamera(36, 1, 0.05, 100);
   camera.up.set(0, 0, 1);
   orbit = new OrbitControls(camera, renderer.domElement);
-  Object.assign(orbit, { enableDamping: true, minDistance: 1.5, maxDistance: 16, maxPolarAngle: Math.PI * 0.49, enableZoom: false });
+  Object.assign(orbit, { enableDamping: true, minDistance: 1.5, maxDistance: 16, maxPolarAngle: Math.PI * 0.95, enableZoom: false });
   // Wheel zoom only after the viewer is engaged, so page scrolling is never captured by accident.
   renderer.domElement.addEventListener('pointerdown', () => { orbit.enableZoom = true; });
   ui.stage.addEventListener('pointerleave', () => { orbit.enableZoom = false; });
