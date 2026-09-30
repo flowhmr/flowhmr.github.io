@@ -20,6 +20,7 @@ let scenes = [], bodies = [], trails = [], thumbs = new Map(), cache = new Map()
 let clip = null, data = null, frame = 0, token = 0, lastTick = 0;
 let wantPlay = !reducedMotion.matches, visible = false, following = true, ready = false, pendingId = null;
 let pelvis, desired, step, qa, qb, va, vb;
+let playPending = null;
 
 if (root) boot().catch(error => showMessage('The 3D viewer could not start.', error));
 
@@ -225,6 +226,10 @@ async function setup() {
     if (document.hidden) ui.video.pause();
     else if (wantPlay && visible && clip) play();
   });
+  // On mobile the input video can enter the viewport after the taller viewer card.
+  new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) resumePlayback();
+  }, { threshold: [0, 0.15] }).observe(ui.video);
   bindControls();
 }
 
@@ -343,7 +348,7 @@ function waitForVideo(video) {
   return new Promise((resolve, reject) => {
     const done = () => { cleanup(); resolve(); };
     const fail = () => { cleanup(); reject(new Error('video')); };
-    const timer = setTimeout(done, 6000);
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Video metadata timed out')); }, 20000);
     function cleanup() { clearTimeout(timer); video.removeEventListener('loadedmetadata', done); video.removeEventListener('error', fail); }
     video.addEventListener('loadedmetadata', done);
     video.addEventListener('error', fail);
@@ -506,14 +511,28 @@ function seek(target) {
   applyPose(frame);
 }
 
+function resumePlayback() {
+  if (wantPlay && visible && !document.hidden && ui.loading.hidden && clip && ui.video.paused) play();
+}
+
 async function play() {
-  if (!clip || document.hidden) return;
-  ui.video.playbackRate = Number(ui.speed.value);
-  try { await ui.video.play(); } catch { /* The play button remains available. */ }
+  if (!clip || document.hidden || !ui.loading.hidden) return;
+  if (playPending) return playPending;
+  const video = ui.video;
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+  video.autoplay = wantPlay;
+  video.playbackRate = Number(ui.speed.value);
+  const attempt = video.play();
+  playPending = attempt;
+  try { await attempt; } catch { /* Retry on readiness, visibility, or a viewer tap. */ }
+  finally { if (playPending === attempt) playPending = null; updatePlayButton(); }
 }
 
 function pause() {
   wantPlay = false;
+  ui.video.autoplay = false;
   ui.video.pause();
 }
 
@@ -525,7 +544,14 @@ function updatePlayButton() {
 
 function bindControls() {
   const video = ui.video;
-  video.muted = true;
+  video.muted = video.defaultMuted = true;
+  video.playsInline = true;
+  video.addEventListener('loadeddata', resumePlayback);
+  video.addEventListener('canplay', resumePlayback);
+  // A blocked mobile autoplay can be resumed without switching the selected case.
+  root.addEventListener('click', event => {
+    if (!event.target.closest('button, input, select')) resumePlayback();
+  });
   video.addEventListener('play', updatePlayButton);
   video.addEventListener('pause', updatePlayButton);
   ui.play.addEventListener('click', () => {
@@ -564,7 +590,10 @@ async function select(id, { play: start = false } = {}) {
   showMessage('Loading motion…');
   const video = ui.video;
   video.pause();
+  playPending = null;
+  video.autoplay = false;
   video.src = `${base}${item.video}?v=${item.v}`;
+  video.load();
   try {
     const [clipData] = await Promise.all([loadClip(item), waitForVideo(video)]);
     if (mine !== token) return;
