@@ -1,4 +1,7 @@
-:root{--paper:#fff;--ink:#17262d;--muted:#596970;--accent:#0d6866;--line:#e2e8e9;--tint:#f1f7f7;--font:"Comic Sans MS","Comic Sans",cursive}
+/* Self-hosted fallback for devices without Comic Sans MS (SIL OFL 1.1). */
+@font-face{font-family:"Comic Relief";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/comic-relief-latin-regular.woff2") format("woff2")}
+@font-face{font-family:"Comic Relief";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/comic-relief-latin-bold.woff2") format("woff2")}
+:root{--paper:#fff;--ink:#17262d;--muted:#596970;--accent:#0d6866;--line:#e2e8e9;--tint:#f1f7f7;--font:"Comic Sans MS","Comic Sans","Comic Relief",system-ui,sans-serif}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:24px}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.65}
