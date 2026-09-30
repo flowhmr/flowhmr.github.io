@@ -172,14 +172,14 @@ async function setup() {
   renderer.toneMapping = THREE.AgXToneMapping;
   renderer.toneMappingExposure = 1.18;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.VSMShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   ui.stage.prepend(renderer.domElement);
   RectAreaLightUniformsLib.init();
 
   camera = new THREE.PerspectiveCamera(36, 1, 0.05, 100);
   camera.up.set(0, 0, 1);
   orbit = new OrbitControls(camera, renderer.domElement);
-  Object.assign(orbit, { enableDamping: true, minDistance: 1.5, maxDistance: 16, maxPolarAngle: Math.PI * 0.95, enableZoom: false });
+  Object.assign(orbit, { enableDamping: true, minDistance: 1.5, maxDistance: 16, maxPolarAngle: Math.PI * 0.49, enableZoom: false });
   // Wheel zoom only after the viewer is engaged, so page scrolling is never captured by accident.
   renderer.domElement.addEventListener('pointerdown', () => { orbit.enableZoom = true; });
   ui.stage.addEventListener('pointerleave', () => { orbit.enableZoom = false; });
@@ -243,24 +243,37 @@ function makeScene(style) {
     light.lookAt(0, 0, 1);
     rig.add(light);
   }
-  const sun = new THREE.DirectionalLight(0xffffff, 0.85);
+  const sun = new THREE.DirectionalLight(0xffffff, 2.2);
   sun.position.set(-3, -4, 6);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -3.5, right: 3.5, top: 3.5, bottom: -3.5, near: 0.1, far: 20 });
-  Object.assign(sun.shadow, { bias: -0.00015, normalBias: 0.018, radius: 5, blurSamples: 8 });
+  Object.assign(sun.shadow, { bias: -0.00015, normalBias: 0.002, radius: 2 });
   rig.add(sun, sun.target);
   // Weak, shadowless bounce light so soles stay readable when orbiting below the ground.
   const bounce = new THREE.DirectionalLight(0xffffff, 0.55);
   bounce.position.set(1, -2, -6);
   rig.add(bounce, bounce.target);
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.ShadowMaterial({ color: '#5d6b70', opacity: 0.2 }));
-  ground.position.z = -0.027;
+  // Half-meter tiles provide a stable height reference without hiding contact shadows.
+  const tileCanvas = document.createElement('canvas');
+  tileCanvas.width = tileCanvas.height = 256;
+  const ctx = tileCanvas.getContext('2d');
+  ctx.fillStyle = '#c5cecf';
+  ctx.fillRect(0, 0, 256, 256);
+  ctx.fillStyle = '#e0e5e4';
+  ctx.fillRect(0, 0, 128, 128);
+  ctx.fillRect(128, 128, 128, 128);
+  const floorTexture = new THREE.CanvasTexture(tileCanvas);
+  floorTexture.colorSpace = THREE.SRGBColorSpace;
+  floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+  floorTexture.repeat.set(200, 200);
+  floorTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({
+    map: floorTexture, roughness: 1, metalness: 0,
+  }));
+  ground.position.z = 0;
   ground.receiveShadow = true;
-  const grid = new THREE.GridHelper(60, 60, 0xd9e0e1, 0xd9e0e1);
-  grid.rotation.x = Math.PI / 2;
-  grid.position.z = -0.028;
-  scene.add(ground, grid);
+  scene.add(ground);
   return { scene, rig };
 }
 
@@ -370,7 +383,7 @@ function buildCharacter(model, buffer, material) {
 }
 
 // ---------- Ground trajectory ----------
-const TRAIL_WIDTH = 0.045, TRAIL_Z = -0.02;
+const TRAIL_WIDTH = 0.045, TRAIL_Z = 0.004;
 const TRAIL_STYLE = [{ color: '#b98d62' }, { color: '#2f6f86' }];
 
 // Flat ribbon along the pelvis ground projection; 6 indices per segment.
