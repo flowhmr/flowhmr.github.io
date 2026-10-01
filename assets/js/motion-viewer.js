@@ -593,6 +593,14 @@ async function select(id, { play: start = false } = {}) {
     clip = item;
     data = clipData;
     smpl.scale.setScalar(item.scale);
+    // Retarget limb lengths to the source subject; reset the rest offsets on every clip switch.
+    const rest = manifest.model.rest;
+    smplBones.forEach((bone, j) => {
+      const parent = manifest.model.parents[j];
+      if (parent < 0) return; // Root translation is supplied by applyPose.
+      if (item.jointOffsets) bone.position.fromArray(item.jointOffsets, j * 3);
+      else bone.position.set(rest[j * 3] - rest[parent * 3], rest[j * 3 + 1] - rest[parent * 3 + 1], rest[j * 3 + 2] - rest[parent * 3 + 2]);
+    });
     smplHolder.position.fromArray(item.offset);
     // One constant offset for the whole clip: preserve all vertical motion and joint rotations.
     smplHolder.position.z += item.generatedGroundOffset || 0;
