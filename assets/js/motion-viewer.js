@@ -594,6 +594,8 @@ async function select(id, { play: start = false } = {}) {
     data = clipData;
     smpl.scale.setScalar(item.scale);
     smplHolder.position.fromArray(item.offset);
+    // One constant offset for the whole clip: preserve all vertical motion and joint rotations.
+    smplHolder.position.z += item.generatedGroundOffset || 0;
     buildTrails(item, clipData);
     ui.scrub.max = String(item.frames - 1);
     seek(0);
