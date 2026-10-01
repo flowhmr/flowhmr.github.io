@@ -452,7 +452,7 @@ function applyPose(f) {
   va.fromArray(data.root, a * 3);
   vb.fromArray(data.root, b * 3);
   const hip = va.lerp(vb, t);
-  pelvis.set(hip.x + clip.offset[0], -hip.z + clip.offset[1], hip.y + clip.offset[2]);
+  pelvis.set(hip.x + clip.offset[0], -hip.z + clip.offset[1], hip.y);
   smplBones[0].position.copy(hip).divideScalar(clip.scale);
   for (let i = 0; i < B; i++) {
     bodies[i].position.lerpVectors(va.fromArray(data.robotPos, (a * B + i) * 3), vb.fromArray(data.robotPos, (b * B + i) * 3), t);
@@ -601,9 +601,8 @@ async function select(id, { play: start = false } = {}) {
       if (item.jointOffsets) bone.position.fromArray(item.jointOffsets, j * 3);
       else bone.position.set(rest[j * 3] - rest[parent * 3], rest[j * 3 + 1] - rest[parent * 3 + 1], rest[j * 3 + 2] - rest[parent * 3 + 2]);
     });
-    smplHolder.position.fromArray(item.offset);
-    // One constant offset for the whole clip: preserve all vertical motion and joint rotations.
-    smplHolder.position.z += item.generatedGroundOffset || 0;
+    // Align only horizontally with the simulation. Keep the source motion's ground height.
+    smplHolder.position.set(item.offset[0], item.offset[1], 0);
     buildTrails(item, clipData);
     ui.scrub.max = String(item.frames - 1);
     seek(0);
