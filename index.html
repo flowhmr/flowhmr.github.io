@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="FlowHMR combines flow matching with physics-based reinforcement learning to recover faithful and physically plausible 3D human motion from monocular videos.">
+  <meta property="og:title" content="FlowHMR: Physically Plausible Motion Capture from Video">
+  <meta property="og:description" content="Recovering faithful and physically plausible global 3D human motion from monocular video with flow matching and physics-based reinforcement learning.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://flowhmr.github.io/">
+  <link rel="canonical" href="https://flowhmr.github.io/">
+  <link rel="icon" href="data:,">
+  <title>FlowHMR: Physically Plausible Motion Capture from Video</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=28d409fab5">
+  <script src="assets/js/main.js?v=ef2ec3dff7" defer></script>
+  <script src="assets/js/demo-player.js?v=456d8ab39e" defer></script>
+  <script type="importmap">{"imports":{"three":"./assets/vendor/three/build/three.module.js","three/addons/":"./assets/vendor/three/examples/jsm/"}}</script>
+  <script type="module" src="assets/js/motion-viewer.js?v=020c3dc5b8"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="paper-title">
+      <div class="hero-media" aria-hidden="true">
+        <video id="hero-video" muted playsinline loop preload="none" poster="assets/media/hero-poster.jpg" tabindex="-1" disablepictureinpicture>
+          <source data-src="assets/media/hero-loop.mp4?v=da8cc16d27" type="video/mp4">
+        </video>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-content wrap">
+      <h1 id="paper-title"><img class="project-logo" src="assets/icons/flowhmr-logo.svg?v=941e1ec6bc" width="1440" height="298" alt="FlowHMR"></h1>
+      <div class="resource-links" aria-label="Project resources">
+        <a class="watch-button" href="#demo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg>Demo</a>
+        <a class="resource-button" href="https://arxiv.org/abs/2610.03691" target="_blank" rel="noopener noreferrer" aria-label="Paper on arXiv">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 12h8M8 16h6"/></svg>
+          <span>Paper</span>
+        </a>
+        <a class="resource-button" href="https://github.com/flowhmr/flowhmr" target="_blank" rel="noopener noreferrer" aria-label="Code on GitHub">
+          <img class="brand-icon" src="assets/icons/github.svg?v=242fc1c789" width="20" height="20" alt="">
+          <span>Code</span>
+        </a>
+        <a class="resource-button" href="https://huggingface.co/fafsaf1/flowhmr-0.46B" target="_blank" rel="noopener noreferrer" aria-label="Model on Hugging Face">
+          <img class="brand-icon" src="assets/icons/huggingface.svg?v=c2b0b725ed" width="20" height="20" alt="">
+          <span>Model</span>
+        </a>
+      </div>
+      </div>
+    </section>
+
+    <section class="tldr-section wrap" aria-label="TL;DR">
+      <span class="tldr-label">TL;DR</span>
+      <div class="tldr-copy">
+        <p class="tldr"><strong>Flow matching</strong> + <strong>physics-based GRPO</strong> &rarr; physically plausible 3D motion</p>
+      </div>
+    </section>
+
+    <section class="demo-section wrap" id="demo" aria-label="FlowHMR demonstration">
+      <figure class="demo-figure mv-card" data-demo-player>
+        <div class="video-frame">
+          <button class="demo-sound-button" type="button" data-demo-mute aria-label="Sounds on — mute" aria-pressed="false" aria-controls="demo-video" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4z"/><path class="volume-on" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="volume-off" d="m16 9 6 6m0-6-6 6"/></svg><span data-demo-sound-label>Sounds on</span></button>
+          <video id="demo-video" controls playsinline tabindex="0" preload="none" poster="assets/media/demo-poster.jpg" aria-label="FlowHMR video demonstration">
+            <source data-src="assets/media/flowhmr-demo.mp4" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/flowhmr-demo.mp4">Download the demonstration video.</a>
+          </video>
+        </div>
+        <div class="mv-controls demo-controls" data-demo-controls role="group" aria-label="Demo playback controls" hidden>
+          <button class="mv-button mv-play" type="button" data-demo-play data-state="paused" aria-label="Play" aria-controls="demo-video"><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg></button>
+          <input class="mv-scrub" type="range" min="0" max="0" step="0.01" value="0" data-demo-scrub aria-label="Timeline" aria-controls="demo-video" disabled>
+          <button class="mv-button demo-icon-button" type="button" data-demo-fullscreen aria-label="Enter fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+        </div>
+        <p class="demo-error" data-demo-error role="status" hidden></p>
+      </figure>
+    </section>
+
+    <section class="viewer-section section wrap" id="viewer" aria-labelledby="viewer-title">
+      <div class="section-heading centered"><h2 id="viewer-title">Explore in <span>3D</span></h2></div>
+      <div class="motion-viewer" data-motion-viewer data-manifest="assets/viewer/manifest.json?v=dcf4e9f689">
+        <div class="mv-strip">
+          <button class="mv-strip-arrow mv-strip-prev" type="button" data-mv-strip-prev aria-label="Previous clip"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+          <div class="mv-strip-track" data-mv-gallery role="group" aria-label="Clips. Use the left and right arrow keys to switch."></div>
+          <button class="mv-strip-arrow mv-strip-next" type="button" data-mv-strip-next aria-label="Next clip"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+        </div>
+        <div class="mv-card">
+          <div class="mv-stage">
+            <div class="mv-video-panel">
+              <span class="mv-label">Input<small>Monocular video</small></span>
+              <video data-mv-video muted playsinline loop preload="auto" disablepictureinpicture aria-label="Input video for the selected clip"></video>
+            </div>
+            <div class="mv-canvas" data-mv-canvas tabindex="0" aria-label="3D viewer. Space plays or pauses." aria-describedby="mv-interaction-hint">
+              <div class="mv-labels" aria-hidden="true"><span><i class="mv-dot is-smpl"></i>Generated<small>FlowHMR motion</small></span><span><i class="mv-dot is-phc"></i>Simulated<small>PHC tracking</small></span></div>
+              <div class="mv-loading" data-mv-loading role="status">Loading 3D viewer…</div>
+            </div>
+          </div>
+          <div class="mv-controls">
+            <button class="mv-button mv-play" type="button" data-mv-play data-state="paused" aria-label="Play"><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg></button>
+            <input class="mv-scrub" type="range" min="0" max="0" step="1" value="0" data-mv-scrub aria-label="Timeline">
+            <button class="mv-button mv-toggle" type="button" data-mv-follow aria-pressed="true">Follow</button>
+            <button class="mv-button" type="button" data-mv-reset>Reset view</button>
+          </div>
+          <p class="mv-hint" id="mv-interaction-hint">Drag to orbit · Scroll to zoom · Right-drag to pan</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="comparisons-section section wrap" id="comparisons" aria-labelledby="comparisons-title">
+      <div class="section-heading centered"><h2 id="comparisons-title">Qualitative <span>Comparisons</span></h2></div>
+      <div class="video-carousel">
+      <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+      <button class="carousel-arrow carousel-next" type="button" aria-label="Next video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+      <div class="application-grid" data-video-gallery tabindex="0" aria-label="Video carousel">
+        <figure class="application-card">
+          <div class="video-frame">
+            <video id="comparison-video-1" data-autoplay-video controls muted playsinline loop preload="none" poster="assets/media/comparison-1-poster.jpg?v=86f532405b" aria-label="Push-up qualitative comparison">
+              <source data-src="assets/media/comparison-1.mp4?v=75c70d237b" type="video/mp4">
+              Your browser does not support embedded video. <a href="assets/media/comparison-1.mp4?v=75c70d237b">Download the push-up comparison.</a>
+            </video>
+          </div>
+        </figure>
+        <figure class="application-card">
+          <div class="video-frame">
+            <video id="comparison-video-2" data-autoplay-video controls muted playsinline loop preload="none" poster="assets/media/comparison-2-poster.jpg" aria-label="Soccer kick qualitative comparison">
+              <source data-src="assets/media/comparison-2.mp4" type="video/mp4">
+              Your browser does not support embedded video. <a href="assets/media/comparison-2.mp4">Download the soccer kick comparison.</a>
+            </video>
+          </div>
+        </figure>
+      </div>
+      </div>
+    </section>
+
+    <section class="application-section section wrap" id="application" aria-labelledby="application-title">
+      <div class="section-heading centered"><h2 id="application-title">More Application</h2></div>
+      <div class="video-carousel">
+      <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+      <button class="carousel-arrow carousel-next" type="button" aria-label="Next video"><svg class="direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+      <div class="application-grid" data-video-gallery tabindex="0" aria-label="Video carousel">
+        <figure class="application-card">
+          <div class="video-frame">
+            <video id="application-video-robotics" data-autoplay-video controls muted playsinline loop preload="none" poster="assets/media/application-robotics-poster.jpg?v=e2c37c7643" aria-label="FlowHMR motions retargeted to G1 and tracked with SONIC in physics simulation" aria-describedby="application-robotics-description">
+            <source data-src="assets/media/application-robotics.mp4?v=635178af20" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/application-robotics.mp4">Download the robotics application video.</a>
+          </video>
+          </div>
+          <figcaption>
+            <h3>Data for Robotics</h3>
+            <p class="application-description" id="application-robotics-description">We retarget motions generated by FlowHMR to the Unitree G1 robot using <a href="https://github.com/YanjieZe/GMR" target="_blank" rel="noopener noreferrer">GMR</a>, then use <a href="https://nvlabs.github.io/GEAR-SONIC/" target="_blank" rel="noopener noreferrer">SONIC</a> to track the retargeted motions in physics simulation.</p>
+          </figcaption>
+        </figure>
+        <figure class="application-card">
+          <div class="video-frame">
+            <video id="application-video-animation" data-autoplay-video controls muted playsinline loop preload="none" poster="assets/media/application-animation-poster.jpg?v=031a8cb517" aria-label="FlowHMR motion in a reconstructed basketball scene" aria-describedby="application-animation-description">
+            <source data-src="assets/media/application-animation.mp4?v=c2bcb5713a" type="video/mp4">
+            Your browser does not support embedded video. <a href="assets/media/application-animation.mp4?v=c2bcb5713a">Download the animation application video.</a>
+          </video>
+          </div>
+          <figcaption>
+            <h3>Animation Creation</h3>
+            <p class="application-description" id="application-animation-description">We use GPT-6 Astra for scene reconstruction, motion retargeting, and alignment.</p>
+          </figcaption>
+        </figure>
+        <figure class="application-card">
+          <div class="video-frame">
+            <video id="application-video-text-to-motion" data-autoplay-video controls muted playsinline loop preload="none" poster="assets/media/application-text-to-motion-poster.jpg?v=8d71feb55c" aria-label="Text-to-motion generation with MiniMax H3 and FlowHMR" aria-describedby="application-text-to-motion-description">
+              <source data-src="assets/media/application-text-to-motion.mp4?v=a082322593" type="video/mp4">
+              Your browser does not support embedded video. <a href="assets/media/application-text-to-motion.mp4?v=a082322593">Download the text-to-motion application video.</a>
+            </video>
+          </div>
+          <figcaption>
+            <h3>Text-to-Motion</h3>
+            <p class="application-description" id="application-text-to-motion-description">We generate a video from a text prompt with <a href="https://www.minimax.io/blog/minimax-h3" target="_blank" rel="noopener noreferrer">MiniMax H3</a>, then capture its 3D human motion with FlowHMR.</p>
+          </figcaption>
+        </figure>
+      </div>
+      </div>
+    </section>
+
+    <section class="citation-section section wrap" id="bibtex" aria-labelledby="citation-title">
+      <div class="section-heading centered"><h2 id="citation-title">BibTeX</h2></div>
+      <div class="citation-card">
+        <div class="citation-toolbar">
+          <a href="assets/flowhmr.bib" download>flowhmr.bib</a>
+          <button class="citation-copy" type="button" data-copy-citation aria-controls="citation-code" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><span>Copy BibTeX</span></button>
+        </div>
+        <pre tabindex="0" aria-label="BibTeX citation"><code id="citation-code">@misc{wang2026flowhmr,
+  title={{FlowHMR}: Physically Plausible Motion Capture from Video},
+  author={Zhanke Wang and Chengfeng Zhao and Qing Shuai and
+          Jingzhong Lin and Heng Li and Zeyu Ling and Yuxin Wen and
+          Jing Li and Di Kang and Chunchao Guo and Linchao Bao},
+  year={2026},
+  eprint={2610.03691},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2610.03691}
+}</code></pre>
+      </div>
+      <p class="citation-status" data-copy-status role="status" aria-live="polite" hidden></p>
+    </section>
+
+  </main>
+
+</body>
+</html>
